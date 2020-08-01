@@ -1,0 +1,27 @@
+<p>clientes</p>
+
+
+<div class="my-2 text-left">
+    <button class="btn btn-rounded btn-primary" [routerLink]="['/clientes/form/']"  type=button>Crear Cliente</button>
+</div>
+
+<table class="table table-border">
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Correo</th>
+        <th></th>
+    </tr>
+    <tr *ngFor="let cliente of listaClientes" >
+        <td>{{cliente.id}}</td>
+        <td>{{cliente.nombre}}</td>
+        <td>{{cliente.email}}</td>
+        <td>
+            <a [routerLink]="['/clientes/form/', cliente.id]" class="btn btn-rounded btn-info">
+                Editar
+                <span class="glyphicon glyphicon-pencil"></span>
+              </a>
+        </td>
+    </tr>
+</table>
+

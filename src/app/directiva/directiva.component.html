@@ -1,0 +1,6 @@
+<button class="btn btn-primary" (click)="bHabilitar= (bHabilitar)? false: true;" >{{  (bHabilitar)? 'Ocultar': 'Mostrar'  }}</button>
+<br><br>
+<ul class="list-group" *ngIf="bHabilitar">
+    <li class="list-group-item active">Cursos </li>
+    <li class="list-group-item"    *ngFor="let curso of listaCurso"  >{{ curso }}</li>
+  </ul>
