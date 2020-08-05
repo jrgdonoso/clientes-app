@@ -72,6 +72,15 @@ export class FormComponent implements OnInit {
 
 
 
+
+ 
+
+
+
+
+
+
+
   public update():void{
     console.log("update Checked!!");
     console.log(this.cliente);
@@ -87,6 +96,11 @@ export class FormComponent implements OnInit {
 
        }
     );
+
+
+
+
+   
 }
 
 

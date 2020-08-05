@@ -16,7 +16,7 @@ export class ClienteService {
 
 
   
-  private urlEndPoint="http://localhost:8080/api/clientes";
+  private urlEndPoint="http://localhost:8080/api/clientes/";
  private httpHeadders=new HttpHeaders({'Content-Type':'application/json'})
 
 
@@ -87,6 +87,12 @@ getClienteById(id:number): Observable<Cliente>{
 
     console.log("desde llenar "+listaCli)
     return listaCli;
+  }
+
+
+
+  public eliminar(id:number):Observable<any>{
+    return this.http.delete<any>(this.urlEndPoint+id+"/", {headers:this.httpHeadders});
   }
 
 
