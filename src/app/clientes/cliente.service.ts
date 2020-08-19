@@ -1,9 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Cliente } from './cliente';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { CLIENTES } from './clientes.json';
 import {HttpClient, HttpHeaders} from '@angular/common/http'
-import {map} from 'rxjs/operators';
+import {map, catchError, tap} from 'rxjs/operators';
+import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
+import { formatDate,registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+
+
 
 
 
@@ -21,7 +27,7 @@ export class ClienteService {
 
 
 
-  constructor(  private http:HttpClient  ) { 
+  constructor(  private http:HttpClient , private route:Router ) { 
 
   }
 
@@ -38,7 +44,36 @@ export class ClienteService {
 
    //#utilizando map
    return this.http.get(this.urlEndPoint).pipe(
-      map(response => response as Cliente[])
+      
+    //utilizamos tap solo para probar su utilizacion
+    tap( response=> {
+      let listClientes= response as Cliente[];
+      console.log("clienteService: 1")
+      listClientes.forEach(cliente=>console.log(cliente.nombre))
+      
+    }),
+  
+    map( response =>  {
+        let responseClientes=response as Cliente[]
+        responseClientes.map(cli=> {
+          cli.nombre=cli.nombre.toUpperCase();
+          registerLocaleData(localeEs, 'es');
+          cli.createAt=formatDate( cli.createAt,"EEEE, dd-MM-yyyy", "es")
+          return cli;
+        })
+
+        return responseClientes;
+      }),
+
+
+      tap(lClientes=> {
+        console.log("clienteService: 2");
+        lClientes.forEach( cli=> console.log(cli.nombre) )
+      })
+
+     
+      
+      
    )
 
    // #utilizando map pero sin implementar las funciones flechas
@@ -53,13 +88,75 @@ export class ClienteService {
 
 
 create(cliente:Cliente):Observable<Cliente>{
-  return this.http.post<Cliente>(this.urlEndPoint, cliente, {headers:this.httpHeadders})
+  return this.http.post<Cliente>(this.urlEndPoint, cliente, {headers:this.httpHeadders}).pipe(
+
+      map( (response:any)=> response.cliente as Cliente),
+
+      catchError(e=> {
+
+        //validaciones backend
+        if(e.status == 400){
+          alert("Error validacion")
+          return throwError(e);
+        }
+
+
+        //Error en try del backend
+        Swal.fire({
+          title: e.error.Mensaje,
+          text: e.error.error,
+          icon: 'error',
+          confirmButtonText: 'Ok'
+        })
+            
+             return throwError(e);
+
+      })
+
+  )
 }
 
 
+update(cliente:Cliente):Observable<any>{
+  return this.http.put<any>(this.urlEndPoint+"/"+cliente.id, cliente, {headers:this.httpHeadders}).pipe(
+
+    catchError(e=> {
+
+      //validaciones backend
+      if(e.status == 400){
+        alert("Error validacion")
+        return throwError(e);
+      }
+
+
+      Swal.fire({
+        title: e.error.Mensaje,
+        text: e.error.error,
+        icon: 'error',
+        confirmButtonText: 'Ok'
+      })
+           return throwError(e);
+    })
+
+)
+}
+/*
 update(cliente:Cliente):Observable<Cliente>{
-  return this.http.put<Cliente>(this.urlEndPoint+"/"+cliente.id, cliente, {headers:this.httpHeadders})
-}
+  return this.http.put<Cliente>(this.urlEndPoint+"/"+cliente.id, cliente, {headers:this.httpHeadders}).pipe(
+
+    catchError(e=> {
+      Swal.fire({
+        title: e.error.Mensaje,
+        text: e.error.error,
+        icon: 'error',
+        confirmButtonText: 'Ok'
+      })
+           return throwError(e);
+    })
+
+)
+}*/
+
 
 
 
@@ -69,9 +166,28 @@ update(cliente:Cliente):Observable<Cliente>{
 getClienteById(id:number): Observable<Cliente>{
   return this.http.get(this.urlEndPoint+"/"+id).pipe(
      map(response => response as Cliente)
-  )
+  ).pipe(catchError(e=>{  
+    this.route.navigate(["/clientes"])
+    Swal.fire({
+      title: 'Error',
+      text: e.error.mensaje,
+      icon: 'error',
+      confirmButtonText: 'Ok'
+    })
+       return throwError(e) 
+      })
+    )
 }
 
+
+/*getClienteById(id:number): Observable<Cliente>{
+  return this.http.get<Cliente>(this.urlEndPoint+"/"+id).pipe(
+        catchError(e => {
+          console.error("Error")
+          return throwError(e);
+        })
+    )
+}*/
 
 
 
@@ -92,7 +208,21 @@ getClienteById(id:number): Observable<Cliente>{
 
 
   public eliminar(id:number):Observable<any>{
-    return this.http.delete<any>(this.urlEndPoint+id+"/", {headers:this.httpHeadders});
+    return this.http.delete<any>(this.urlEndPoint+id+"/", {headers:this.httpHeadders}).pipe(
+
+      catchError(e=> {
+        Swal.fire({
+          title: e.error.Mensaje,
+          text: e.error.error,
+          icon: 'error',
+          confirmButtonText: 'Ok'
+        })
+            
+             return throwError(e);
+
+      })
+
+  )
   }
 
 

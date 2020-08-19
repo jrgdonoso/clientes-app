@@ -3,18 +3,49 @@
 
     <div class="card-body">
 
-     <form  >
+       
+        <ul class="alert alert-danger" *ngIf="errores?.length > 0">
+            <li *ngFor="let err of errores"> 
+                {{ err }} 
+            </li>
+        </ul>
+
+
+
+
+     <form  #clienteForm="ngForm">
          <div class="form-group row">
              <label for="nombre" class="col-form-label col-sm-2">Nombre</label>
              <div class="col-sm-6">
-                 <input type="text" class="form-control"  [(ngModel)]="cliente.nombre" name="nombre" >
+                 <input type="text" class="form-control"  [(ngModel)]="cliente.nombre" name="nombre"  #nombre="ngModel"  > <!--required minlength="3"-->
+                 <div  *ngIf="nombre.invalid && (nombre.touched || nombre.dirty)">
+                      <div class="alert alert-danger"  *ngIf="nombre.errors.minlength">
+                            El campo debe tener como minimo un largo de 3 caracteres
+                      </div>
+                      <div class="alert alert-danger"  *ngIf="nombre.errors.required">
+                        El campo es obligatorio
+                  </div>
+                 </div>  
+
+
              </div>
          </div>
 
          <div class="form-group row">
             <label for="apellido" class="col-form-label col-sm-2">Apellido</label>
             <div class="col-sm-6">
-                <input type="text" class="form-control"  [(ngModel)]="cliente.apellido" name="apellido" >
+                <input type="text" class="form-control"  [(ngModel)]="cliente.apellido" name="apellido"  #apellido="ngModel">  <!--required minlength="3"-->
+                
+                <div  *ngIf="apellido.invalid && (apellido.touched || apellido.dirty)">
+                    <div class="alert alert-danger"  *ngIf="apellido.errors.minlength">
+                          El campo debe tener como minimo un largo de 3 caracteres
+                    </div>
+                    <div class="alert alert-danger"  *ngIf="apellido.errors.required">
+                      El campo es obligatorio
+                </div>
+               </div>  
+
+
             </div>
         </div>
 
@@ -22,16 +53,29 @@
         <div class="form-group row">
             <label for="email" class="col-form-label col-sm-2">Email</label>
             <div class="col-sm-6">
-                <input type="text" class="form-control"  [(ngModel)]="cliente.email" name="email" >
+                <input type="text" class="form-control"  [(ngModel)]="cliente.email" name="email"   #email="ngModel" > <!--required email-->
+
+
+                <div  *ngIf="email.invalid && (email.touched || email.dirty)">
+                    <div class="alert alert-danger"  *ngIf="email.errors.email">
+                          El campo debe tener formato de correo electronico
+                    </div>
+                    <div class="alert alert-danger"  *ngIf="email.errors.required">
+                      El campo es obligatorio
+                </div>
+               </div>  
+
+
+
             </div>
         </div>
 
 
         <div class="form-group row">
             <div class="col-sm-6">
-                <button class="btn btn-primary " role="button" (click)='create()'  *ngIf="!cliente.id else elseBlock"  >Crear</button>
+                <button class="btn btn-primary " role="button" (click)='create()'  *ngIf="!cliente.id else elseBlock"  [disabled]="!clienteForm.form.valid" >Crear</button>
                <ng-template #elseBlock>
-                <button class="btn btn-primary " role="button" (click)='update()'  >Actualizar</button>
+                <button class="btn btn-primary " role="button" (click)='update()'  [disabled]="!clienteForm.form.valid" >Actualizar</button>
                </ng-template>
             
             </div>

@@ -15,6 +15,7 @@ export class FormComponent implements OnInit {
 
   public cliente: Cliente=new Cliente();
   public titulo: String="Crear Cliente";
+  public errores: String[];
   
   constructor( 
     private miClienteService:ClienteService,
@@ -60,10 +61,16 @@ export class FormComponent implements OnInit {
            this.router.navigate(['clientes'])
            Swal.fire({
             title: 'Cliente agregado',
-            text: 'Cliente agregado exitosamente!!',
+            text: 'Cliente '+response.nombre+' agregado exitosamente!!',
             icon: 'success',
             confirmButtonText: 'Cool'
           })
+          },
+          err=> {
+            this.errores= err.error.errors as String[];
+            console.error('Codigo error desde el backend: '+err.status)
+            console.error(err.error.errors)
+            //console.log( "json errores "+JSON.stringify(this.errores.error) )
 
           }
        );
@@ -89,12 +96,17 @@ export class FormComponent implements OnInit {
         this.router.navigate(['clientes'])
         Swal.fire({
          title: 'Cliente Actualizado',
-         text: 'Cliente actualizado exitosamente!!',
+         text: 'Cliente '+response.cliente.nombre+' actualizado exitosamente!!',
          icon: 'success',
          confirmButtonText: 'Cool'
        })
 
-       }
+       },
+       err=> {
+        this.errores= err as String[];
+        console.error('Codigo error desde el backend: '+err.status)
+        console.error(err.error.errors)
+      }
     );
 
 

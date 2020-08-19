@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Cliente } from './cliente';
 import { ClienteService } from './cliente.service';
 import Swal from 'sweetalert2';
+import { pipe } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-clientes',
@@ -21,7 +23,15 @@ export class ClientesComponent implements OnInit {
   ngOnInit() {
 
 
-    this.miClienteService.getClientes().subscribe(
+    this.miClienteService.getClientes().pipe(
+     
+      tap(listClientes=> {
+        console.log("clientes.component: 3")
+        listClientes.forEach(cli=>{
+          console.log(cli.nombre)
+        })
+      })
+    ).subscribe(
       clientes => this.listaClientes = clientes
    );
 
@@ -69,16 +79,6 @@ export class ClientesComponent implements OnInit {
         
       }
     })
-
-
-
-
-
-
-
-
-
-
 
      //this.miClienteService.eliminar(cliente.id).subscribe(response=> {response as any});
   }

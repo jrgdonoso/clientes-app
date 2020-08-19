@@ -5,17 +5,22 @@
     <button class="btn btn-rounded btn-primary" [routerLink]="['/clientes/form/']"  type=button>Crear Cliente</button>
 </div>
 
-<table class="table table-border">
+<div class="alert alert-info" *ngIf="listaClientes?.length===0" >
+    No hay registros
+</div>
+<table class="table table-border" *ngIf="listaClientes?.length>0">
     <tr>
         <th>ID</th>
         <th>Nombre</th>
         <th>Correo</th>
+        <th>Fecha creacion</th>
         <th></th>
     </tr>
     <tr *ngFor="let cliente of listaClientes" >
         <td>{{cliente.id}}</td>
         <td>{{cliente.nombre}}</td>
-        <td>{{cliente.email}}</td>
+        <td>{{cliente.email | uppercase }}</td>
+        <td>{{cliente.createAt }}</td> <!-- date:"EEEE, dd-MM-yyyy"---->
         <td>
             <a [routerLink]="['/clientes/form/', cliente.id]" class="btn btn-rounded btn-info">
                 Editar
