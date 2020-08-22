@@ -4,6 +4,7 @@ import { ClienteService } from './cliente.service';
 import Swal from 'sweetalert2';
 import { pipe } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-clientes',
@@ -14,8 +15,10 @@ export class ClientesComponent implements OnInit {
 
   //public  listaCliente:Cliente[]=[];
   listaClientes: Cliente[];
+  paginador:any;
+  pageActive: number;
 
-  constructor(private miClienteService: ClienteService) {
+  constructor(private miClienteService: ClienteService, private activateRouter:ActivatedRoute) {
 
   }
 
@@ -23,17 +26,35 @@ export class ClientesComponent implements OnInit {
   ngOnInit() {
 
 
-    this.miClienteService.getClientes().pipe(
+    this.activateRouter.paramMap.subscribe(params=>{
+      this.pageActive=+params.get('page') ;
+
+
+
+      this.miClienteService.getClientes(this.pageActive).pipe(
      
-      tap(listClientes=> {
-        console.log("clientes.component: 3")
-        listClientes.forEach(cli=>{
-          console.log(cli.nombre)
+        tap((listClientes:any)=> {
+  
+          console.log("clientes.component: 3");
+          (listClientes.content as Cliente[]).forEach(cli=>{
+            console.log(cli.nombre)
+          })
         })
-      })
-    ).subscribe(
-      clientes => this.listaClientes = clientes
-   );
+      ).subscribe(
+        clientes =>{ 
+          this.listaClientes = (clientes.content as Cliente[])
+          this.paginador=clientes
+        }
+        
+      );
+
+
+
+
+
+
+    })
+  
 
    /* this.miClienteService.getClientes().subscribe(
       function(clientes){

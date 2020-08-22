@@ -21,8 +21,8 @@ import localeEs from '@angular/common/locales/es';
 export class ClienteService {
 
 
-  
-  private urlEndPoint="http://localhost:8080/api/clientes/";
+  page :number=0;
+  private urlEndPoint="http://localhost:8080/api/clientes/page";
  private httpHeadders=new HttpHeaders({'Content-Type':'application/json'})
 
 
@@ -34,8 +34,8 @@ export class ClienteService {
 
 
 
- getClientes(): Observable<Cliente[]>{
-
+// getClientes(page): Observable<Cliente[]>{
+  getClientes(page:number): Observable<any>{
    //Para consumir el observable desde http, se puede hacer de forma directa o utilizando 
    //map.
    
@@ -43,18 +43,18 @@ export class ClienteService {
    //return this.http.get<Cliente[]>(this.urlEndPoint)
 
    //#utilizando map
-   return this.http.get(this.urlEndPoint).pipe(
+   
+   return this.http.get(this.urlEndPoint+"/"+page).pipe(
       
     //utilizamos tap solo para probar su utilizacion
-    tap( response=> {
-      let listClientes= response as Cliente[];
-      console.log("clienteService: 1")
-      listClientes.forEach(cliente=>console.log(cliente.nombre))
-      
+    tap( (response:any) => {
+      let listClientes= (response.content as Cliente[]);
+      //console.log("clienteService: 1")
+      listClientes.forEach(cliente=>console.log())
     }),
   
-    map( response =>  {
-        let responseClientes=response as Cliente[]
+    map( (response:any) =>  {
+        let responseClientes=(response.content as Cliente[])
         responseClientes.map(cli=> {
           cli.nombre=cli.nombre.toUpperCase();
           registerLocaleData(localeEs, 'es');
@@ -62,14 +62,17 @@ export class ClienteService {
           return cli;
         })
 
-        return responseClientes;
+        //return responseClientes;
+        return response;
       }),
 
 
       tap(lClientes=> {
-        console.log("clienteService: 2");
-        lClientes.forEach( cli=> console.log(cli.nombre) )
+        //console.log("clienteService: 2");
+        (lClientes.content as Cliente[]).forEach( cli=> console.log() )
       })
+
+
 
      
       

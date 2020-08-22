@@ -22,7 +22,7 @@
         <td>{{cliente.email | uppercase }}</td>
         <td>{{cliente.createAt }}</td> <!-- date:"EEEE, dd-MM-yyyy"---->
         <td>
-            <a [routerLink]="['/clientes/form/', cliente.id]" class="btn btn-rounded btn-info">
+            <a [routerLink]="['/clientes/form/', cliente.id]" class="btn btn-rounded btn-info ">
                 Editar
                 <span class="glyphicon glyphicon-pencil"></span>
               </a>
@@ -30,4 +30,10 @@
         </td>
     </tr>
 </table>
+
+
+<div>
+    <paginator-nav   *ngIf="paginador" [paginador]="paginador"  ></paginator-nav>
+</div>
+
 
